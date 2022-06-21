@@ -1,0 +1,144 @@
+---
+title: "r20220621_2"
+output:
+  html_document:
+    keep_md: true
+date: '2022-06-21'
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## 라이브러리 불러오기
+- 라이브러리를 불러오자. 
+
+```{r}
+# install.packages("dplyr")
+library(dplyr)
+```
+
+#데이터 전처리 dplyr
+-dplyr --> 10G이내
+-data.table --> 50G이상
+
+#데이터 불러오기
+
+- select: 컬럼명 추출
+- filter : 행 추출(조건식)
+- group by :
+- summarize() :
+-99페이지에서 120까지 하면 된다
+-파생변수
+#경로 설정이 제대로 되지 않아서 이곳에 전체 주소 포함해서 불러옴
+```{r}
+mpg1 <- read.csv("C:/Users/human/Desktop/blog/data/mpg1.csv", stringsAsFactors = F)
+```
+
+#변수 이름 바꾸기
+
+```{r}
+data_rename <- mpg1 %>% 
+  rename(transmission=trans, drive_methhod=drv, city = cty, highway=hwy)#줄임말 변수들을 풀어서 이름 변경
+str(data_rename) # 잘변경 되었는지 확인
+```
+
+#방법 2의 체인 없이 하는 방법은 사용하지 않겠음
+
+#빈도분석 count()
+
+```{r}
+count(mpg1, trans)
+```
+
+#특정 변수의 갯수 확인 table함수와 같은 기능
+
+```{r}
+table(mpg1$trans)
+```
+
+#class 함수에 넣기 데이터의 유형 확인
+
+```{r}
+class(count(mpg1, trans))
+```
+
+#데이터 열에서 일부 추출하기
+
+```{r}
+select_exam <- mpg1 %>% select(trans, cty)
+str(select_exam)
+```
+
+#위의 행동으로 일부만 추출
+
+```{r}
+mpgcopy <- mpg1 %>% select(-trans, -cty)
+str(mpgcopy)
+# -를 사용해서 불필요한 부분을 제외한 데이터를 받을수 있음
+```
+
+
+#데이터 세트에서 행 추출 slice()
+
+```{r}
+slice_mpgdata <- mpg1 %>% slice(1,4,5)
+str(slice_mpgdata)
+#특정행을 잘라냄
+```
+
+#필터 사용하기
+냄
+```{r}
+data_filter <- mpg1 %>% filter(trans == "auto")
+data_filter2 <- filter(mpg1, trans =="auto")
+str(data_filter)
+#auto에 해당하는 데이터만 추출, 또한 위의 데이터는 똑같은 결과를 만들어
+```
+
+#최대와 최소 이외의 다양한 데이터 가공
+
+```{r}
+max(mpg1$cty)
+mpg1 %>% filter(cty==max(cty))
+```
+
+#이외의 논리연산자는 filter를 사용해서 가능
+#조건이 두가지일때 &를 사용
+#or을 사용할때는|(shift + \)를 사용
+
+#glimsa()는요약 확인 , R에서는 양방향으로 보내기 가능 -> 사용가능
+
+#group_by는 왜쓰지? 비교하기 위해서
+
+#연습 문제 6-4
+```{r}
+install.packages("ggplot2")
+library(ggplot2)
+diamonds <- diamonds
+str(diamonds)
+#cut범주별 평균가격 구하기
+#컷번주는
+count(diamonds, cut)
+#종류는 5가지
+que_1 <- diamonds %>% group_by(cut) %>% 
+  summarise(mean = mean(price), n = n())
+#위의 코드를 통해서 평균 가격을 확인할수있음
+#mean함수를 사용할때 앞에 새로운 변수를 만들어주고 뒤에 서머라이즈 카운트를 넣어준다
+#범주별 빈도와 비율 구하기
+#빈도와 비율이니까 한번에 구하라는 문제로 해석
+
+que_2 <- diamonds %>% group_by(cut) %>% summarise(n=n()) %>% 
+  mutate(total = sum(n), pct = n / total*100)
+#128페이지의 예제와 같은 문제이다
+#우선 빈도를 구하고 그것을 n으로 지정, 이후 ,로 나눈후 비율을 구했다.
+
+# 분류를 또 프리미엄과 아이디얼만 가지고 색변수 에서 DE만 추출하세요 그리고
+# cut범주별로 색을 분류하고, 집단별 빈도와 가격 평균을 구하시오 한줄에
+#--> 더이상 생각하기 귀찮아서 다음에 시간나면 시도
+
+```
+
+
+
